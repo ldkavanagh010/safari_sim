@@ -12,9 +12,9 @@ class Animal(Sprite):
     def __init__(self, name, map):
         super(Animal, self).__init__(name)
         self.map = map
-        self.brain = NeuralNetwork(5, 5, 5)
-        self.x_pos = random.randint(0, 79)
-        self.y_pos = random.randint(0, 47)
+        self.brain = NeuralNetwork(9, 9, 5)
+        self.x_pos = random.randint(0, self.map.MAPWIDTH - 1)
+        self.y_pos = random.randint(0, self.map.MAPHEIGHT - 1)
         self.hunger = 0
         self.tiredness = 0
         self.distance_to_food = 0
@@ -27,25 +27,26 @@ class Animal(Sprite):
     def move_up(self):
         if self.valid_move("up"):
             self.y_pos -= 1
-        self.hunger += 10
+        self.eat()
 
     def move_down(self):
         if self.valid_move("down"):
             self.y_pos += 1
-        self.hunger += 10
+        self.eat()
 
     def move_right(self):
         if self.valid_move("right"):
             self.x_pos += 1
-        self.hunger += 10
+        self.eat()
 
     def move_left(self):
         if self.valid_move("left"):
             self.x_pos -= 1
-        self.hunger += 10
+        self.eat()
+
     def sleep(self):
         self.tiredness -= 10
-        self.hunger += 10
+        self.hunger += 5
 
     def valid_move(self, dir):
         if self.y_pos >= 0 and self.y_pos < (self.map.MAPHEIGHT - 1) \
@@ -58,6 +59,14 @@ class Animal(Sprite):
 
         return False
 
+    def eat(self):
+        if self.map.Tiles[self.y_pos][self.x_pos].is_occupied:
+            self.hunger -= 20
+            self.fitness += 25
+            p = self.map.plants.sprites()
+            for eaten in p:
+                if eaten.x_pos == self.x_pos and eaten.y_pos == self.y_pos:
+                    self.map.plants.remove(eaten)
 
 # Think & Helper Functions
 # --------------------------------------------------------------------
@@ -68,19 +77,45 @@ class Animal(Sprite):
         self.update_fitness()
         self.find_food()
 
-        inputs = [self.x_pos, self.y_pos, self.hunger, self.tiredness, self.distance_to_food]
+        inputs = self.make_inputs()
         output = self.brain.feedForward(inputs)
         decision = output.index(max(output))
         if decision == 0:
             self.move_up()
-        if decision == 1:
+        elif decision == 1:
             self.move_down()
-        if decision == 2:
+        elif decision == 2:
             self.move_right()
-        if decision == 3:
+        elif decision == 3:
             self.move_left()
-        if decision == 4:
+        elif decision == 4:
             self.sleep()
+
+
+    def make_inputs(self):
+
+        inputs = [self.x_pos, self.y_pos, self.hunger, self.tiredness, self.distance_to_food]
+
+        if self.y_pos >= 0 and self.y_pos < (self.map.MAPHEIGHT - 1) \
+            and self.x_pos >= 0 and self.x_pos < (self.map.MAPWIDTH - 1):
+            obstruction_left = (0 if self.map.Tiles[self.y_pos][self.x_pos - 1].__str__() == 'GRASS' else 1)
+            obstruction_right = (0 if self.map.Tiles[self.y_pos][self.x_pos + 1].__str__() == 'GRASS' else 1)
+            obstruction_up = (0 if self.map.Tiles[self.y_pos + 1][self.x_pos].__str__() == 'GRASS' else 1)
+            obstruction_down = (0 if self.map.Tiles[self.y_pos - 1][self.x_pos].__str__() == 'GRASS' else 1)
+
+
+
+        else:
+            obstruction_left = (1 if self.x_pos == 0 else 0)
+            obstruction_right = (1 if self.x_pos == self.map.MAPWIDTH else 0)
+            obstruction_up = (1 if self.y_pos == 0 else 0)
+            obstruction_down = (1 if self.x_pos == self.map.MAPHEIGHT else 0)
+
+        inputs.append(obstruction_left)
+        inputs.append(obstruction_right)
+        inputs.append(obstruction_up)
+        inputs.append(obstruction_down)
+        return inputs
 
     def update_fitness(self):
         if self.hunger < 25:

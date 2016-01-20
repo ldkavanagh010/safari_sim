@@ -1,3 +1,5 @@
+import sys
+
 __author__ = 'lkavanagh010'
 import pygame
 import random
@@ -60,10 +62,10 @@ class Map():
 
 # determine the % chance of a tile being water or grass based on tile-height.
     def chance_of_grass(self, height):
-        if   height == 0: return 50
-        elif height <= 3: return 60
-        elif height <= 4: return 80
-        elif height <= 7: return 95
+        if   height == 0: return 100
+        elif height <= 3: return 100
+        elif height <= 4: return 100
+        elif height <= 7: return 100
 
         return 100
 
@@ -175,7 +177,22 @@ class Map():
     def loop(self):
         x = 0
         while True:
+
+            print("tick: " + x.__str__())
+            self.map_tick()
+            self.draw_map()
+            x += 1
+            pygame.time.wait(500)
+            if x == self.sim.NUM_ITERATIONS:
+                self.sim.FLORA_COUNT = 0
+                self.sim.FAUNA_COUNT = 0
+                return
+
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
+                if event.type == pygame.NOEVENT:
+                    break
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.camera.cam_x -= 50
@@ -186,14 +203,7 @@ class Map():
                     if event.key == pygame.K_UP:
                         self.camera.cam_y -= 50
 
-                print("tick: " + x.__str__())
-                self.map_tick()
-                self.draw_map()
-                x += 1
-                if x == self.sim.NUM_ITERATIONS:
-                    self.sim.FLORA_COUNT = 0
-                    self.sim.FAUNA_COUNT = 0
-                    return
+
 
 # Camera Helper Class, Determines what is "onscreen" at any given time
 # --------------------------------------------------------------------------------------
