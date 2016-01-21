@@ -12,12 +12,13 @@ class Animal(Sprite):
     def __init__(self, name, map):
         super(Animal, self).__init__(name)
         self.map = map
-        self.brain = NeuralNetwork(9, 9, 5)
+        self.brain = NeuralNetwork(10, 9, 5)
         self.x_pos = random.randint(0, self.map.MAPWIDTH - 1)
         self.y_pos = random.randint(0, self.map.MAPHEIGHT - 1)
         self.hunger = 0
         self.tiredness = 0
-        self.distance_to_food = 0
+        self.distance_x = 0
+        self.distance_y = 0
         self.fitness = 0
         self.rect = self.image.get_rect()
 
@@ -94,7 +95,7 @@ class Animal(Sprite):
 
     def make_inputs(self):
 
-        inputs = [self.x_pos, self.y_pos, self.hunger, self.tiredness, self.distance_to_food]
+        inputs = [self.x_pos, self.y_pos, self.hunger, self.tiredness, self.distance_x, self.distance_y]
 
         if self.y_pos >= 0 and self.y_pos < (self.map.MAPHEIGHT - 1) \
             and self.x_pos >= 0 and self.x_pos < (self.map.MAPWIDTH - 1):
@@ -134,7 +135,9 @@ class Animal(Sprite):
         print("fitness:" + self.fitness.__str__())
 
     def find_food(self):
-        closest = -1
+        current_distance = - 1
+        closest_x = -1
+        closest_y = -1
         for plant in self.map.plants:
             plant_x = plant.x_pos
             plant_y = plant.y_pos
@@ -144,10 +147,12 @@ class Animal(Sprite):
 
             distance = math.sqrt((x_dist * x_dist) + (y_dist * y_dist))
 
-            if distance < closest or distance == -1:
-                closest = distance
+            if distance < current_distance or current_distance == -1:
+                closest_x = plant_x
+                closest_y = plant_y
 
-        self.distance_to_food = closest
+        self.distance_x = closest_x
+        self.distance_y = closest_y
 
 
     def valid_fauna(self):

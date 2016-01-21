@@ -19,8 +19,9 @@ class NeuralNetwork():
         self.theta_in = np.random.randn(self.inputs, self.hidden)
         self.theta_out = np.random.randn(self.hidden, self.outputs)
 
-        self.delta_in = np.zeros((self.inputs, self.hidden))
-        self.delta_out = np.zeros((self.hidden, self.outputs))
+        # Delta arrays for changes to theta, only for backpropgation
+        # self.delta_in = np.zeros((self.inputs, self.hidden))
+        # self.delta_out = np.zeros((self.hidden, self.outputs))
 
     def feedForward(self, inputs):
         if len(inputs) != self.inputs-1:

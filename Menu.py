@@ -52,7 +52,7 @@ class GameMenu():
                     x, y = event.pos
                     print("click")
                     if self.sbrect.collidepoint(x, y):
-                        self.sim.map = Map(self.sim.MAPWIDTH, self.sim.MAPHEIGHT, self.sim)
+                        self.sim.map.loop()
                     if self.obrect.collidepoint(x, y):
                         self.options = Options(self.sim)
 
@@ -64,7 +64,6 @@ class Options():
 
     def __init__(self, sim):
         self.sim = sim
-
         self.options_loop()
 
 

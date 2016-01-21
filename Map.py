@@ -1,4 +1,5 @@
 import sys
+from GeneticAlgorithm import Algorithm
 
 __author__ = 'lkavanagh010'
 import pygame
@@ -33,8 +34,6 @@ class Map():
 
         self.generate_animals()
 
-        self.loop()
-
 
 # create randomly assigned heightmap of map-size.
 # turn heightmap into game tiles
@@ -62,9 +61,9 @@ class Map():
 
 # determine the % chance of a tile being water or grass based on tile-height.
     def chance_of_grass(self, height):
-        if   height == 0: return 100
-        elif height <= 3: return 100
-        elif height <= 4: return 100
+        if   height == 0: return 75
+        elif height <= 3: return 80
+        elif height <= 4: return 90
         elif height <= 7: return 100
 
         return 100
@@ -186,7 +185,14 @@ class Map():
             if x == self.sim.NUM_ITERATIONS:
                 self.sim.FLORA_COUNT = 0
                 self.sim.FAUNA_COUNT = 0
-                return
+
+                if self.sim.NUM_GENERATIONS < 1:
+                    return
+
+
+                self.genes = Algorithm(self.sim)
+                self.sim.NUM_GENERATIONS -= 1
+                self.loop()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

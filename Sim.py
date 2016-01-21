@@ -16,7 +16,7 @@ class Sim:
     FAUNA_COUNT = 0
     MAX_FAUNA = 32
     NUM_ITERATIONS = 100
-    NUM_GENERATIONS = 0
+    NUM_GENERATIONS = 2
     MAPWIDTH = 80
     MAPHEIGHT = 48
     FRAMERATE = 30
@@ -35,6 +35,9 @@ class Sim:
 
         #create screen
         self.initialize_screen()
+
+        #create map and camera
+        self.initialize_map()
 
         # draw  onto screen
         self.draw_start_screen()
