@@ -15,6 +15,8 @@ Future Versions:
 
 IMPLEMENTED FEATURES
 
+V0.2: --Generational Algorithm - Fittest 'Fauna' are paired with each other, followed by next most fit pair and so on. - Each has some number of offspring to fill out the next generation.
+
 V0.1:
   Implementation of Neural Network with one 'fauna' type.
   Note: They seem quite stupid.
